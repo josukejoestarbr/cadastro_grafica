@@ -1,0 +1,396 @@
+<html> 
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=10, minimum-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.22.2/sweetalert2.min.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+     <!-- Optional JavaScript; choose one of the two! -->
+    
+    
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <link 
+        rel="stylesheet" 
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap-grid.min.css" />
+  <!-- biblioteca axios para get e post-->  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>           
+       
+        <title>Gráfica</title>
+    </head>
+<style>
+    .cinza{
+        background-color:grey;
+        color:white
+    }
+    .branco{
+        background-color: white;
+        color:black;
+    }
+    .branco1{
+        color:white;
+    }
+.orange{
+     background-color:#4682B4;
+     color:white;
+     
+     text-decoration:none; 
+ }
+ .orange1{
+     background-color:#4682B4;
+     color:white;
+     font-size:12px;
+ }
+ .orange1:hover{
+     transition:1s;
+     font-size:12px;
+     background-color:rgb(23, 63, 196);
+     color:white;
+     text-decoration:none; 
+ }
+ label{
+     font-size:12px;
+ }
+ .preto1{
+    background-color:black;
+ }
+ .preto{
+     background-color:black;
+     color:white;
+     font-size:14px;
+ }
+ .preto:hover{
+     transition:.5s;
+     color:black;
+     background-color:white;
+ }
+ .produtos{
+     display:none;
+ }
+ .compradores{
+     display:block;
+ }
+</style>
+
+
+
+<body>
+   
+    <div class='row '>
+        <div class='col-md-3 preto1'>
+            <img src='../static/img/brasaoraniere.png' class='img-fluid' >
+        
+        </div>
+        <div class='col-md-9 preto1'>
+            <h1 class="branco1">&nbsp;</h1><br>
+           
+            <a href='/vendas' class="btn preto">Cadastro de vendas</a>
+            <a href='/inserir' class="btn preto">Cadastro de produtos</a>
+           <a href='/historico' class="btn preto">histórico</a>
+            </div>
+           
+            </div>
+    <div class="container">
+       <div class="row">
+           <div class="col-md-12 produtos" id="produto">
+           <h1 align="center">Histórico de produtos</h1>
+           <button type="button" class="btn btn-primary" onclick="muda('produto')" align="center">Trocar</button>
+           <br><br>
+
+           <div id="listaprodutos">
+
+
+           </div>
+           
+         
+  
+           </div>
+           <div class="col-md-12 compradores" id="comprador" align="center">
+           <h1 align="center">Histórico de compradores</h1>
+           <button type="button" class="btn btn-primary" onclick="muda('comprador')" align="center">Trocar</button>
+           <br><br>
+           <label style="font-size:16px">Filtrar buscas por</label><br><br>
+           <input type="checkbox" name="filtrocomum" onchange="muda1()">
+           <select name="filtro">
+
+               <option value="cidade">cidade</option>
+               <option value="obra">obra</option>
+               <option value="responsavel">responsavel</option>
+               <option value="cnpj">cnpj</option>
+               <option value="cliente">endereço</option>
+               <option value="valormais">valor maior que</option>
+               <option value="valormenos">valor menor que</option>
+           </select>
+           <input type="text" name="busca"><br><br>
+           <label style="font-size:16px">Escolha a data se preferir</label><br><br>
+           <input type="checkbox" name="datafiltro" onchange="muda2()">
+           <input type="text" name="data" style="font-size:14px" onkeypress="mascaraData( this, event )"><br><br>
+           <select name="datasdefine" style="font-size:16px">
+               <option value="mais">mais</option>
+               <option value="menos">menos</option>
+               <option value="igual">igual</option>
+
+           </select>
+           <button type="button" class="btn btn-primary" onclick="pesquisar()" style="font-size:16px">pesquisar</button>
+         
+           <div id="listavendas">
+
+
+           </div>
+        </div>
+       </div>
+  
+    </div>
+    
+</body>
+</html>
+
+<script>
+    //script mascara data
+    function mascaraData( campo, e )
+{
+	var kC = (document.all) ? event.keyCode : e.keyCode;
+	var data = campo.value;
+	
+	if( kC!=8 && kC!=46 )
+	{
+		if( data.length==2 )
+		{
+			campo.value = data += '/';
+		}
+		else if( data.length==5 )
+		{
+			campo.value = data += '/';
+		}
+		else
+			campo.value = data;
+	}
+}
+    //script para mudar as divs
+    var comum='falso';
+    var filtrodata='falso';
+   
+    function muda(decide){
+        //console.log(decide);
+        if(decide=='produto'){
+            document.getElementById('comprador').style.display = 'block';
+            document.getElementById('produto').style.display = 'none';
+        }
+        if(decide=='comprador'){
+            document.getElementById('comprador').style.display = 'none';
+            document.getElementById('produto').style.display = 'block';
+        }
+    
+    }
+    //script das vendas
+    function apagarselecao(){
+        var deletar=document.querySelector('input[name=valorapaga]:checked').value;
+        console.log('pegando o id',deletar);
+        let params = new URLSearchParams();
+            params.append('deletarhistoricoproduto', 'sim');
+            params.append('idhistorico', deletar);
+            var url= ' http://localhost:5000/historico'
+            axios.get(url,{params})
+ 
+            .then(function( response ){
+            // Handle success
+            //console.log(response.data)
+            document.getElementById('listavendas').innerHTML=response.data;
+            
+            }.bind(this));
+    }
+    function muda1(){
+       if(comum=='falso'){
+           comum='verdade';
+       }
+       else{
+           comum='falso';
+       }
+
+    }
+    function muda2(){
+        if(filtrodata=='falso'){
+           filtrodata='verdade';
+       }
+       else{
+           filtrodata='falso';
+       }
+
+    }
+    function pesquisar(){
+        console.log(comum,filtrodata);
+        if(comum=='verdade'){
+            var comum2=document.querySelector('select[name=filtro]').value;
+            var comum1=document.querySelector('input[name=busca]').value;
+            console.log(comum1,comum2)
+            let params = new URLSearchParams();
+            params.append('puxarhistoricovendas', 'sim');
+            params.append('puxarhistoricovendascomum', 'sim');
+            params.append('pesquisadata', 'nao');
+            params.append('filtro', comum2);
+            params.append('input', comum1);
+            var url= ' http://localhost:5000/historico'
+            axios.get(url,{params})
+ 
+            .then(function( response ){
+            // Handle success
+            //console.log(response.data)
+            var resultado=response.data;
+            var limite=resultado.length;
+            console.log(limite);
+            var html="<table  width='100%'  height='100%'><tr class='cinza'><td>index</td><td> cidade  </td><td>  obra  </td><td> responsavel  </td><td>cnpj</td><td>cliente</td><td>valor</td><td>valortotal</td><td>cadastro</td><td>data</td><td>servico</td></tr>";
+            for(var i=0; i<limite;i++){
+                //console.log(i);
+                if(i%2==0){
+                    var data=resultado[i][9];
+                    data=data.split('-');
+                    data=data[1]+'/'+data[0]+'/'+data[2]
+                    html+="<tr ><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="<td>"+resultado[i][4]+"</td><td>"+resultado[i][5]+"</td><td>"+resultado[i][6]+"</td><td>"+resultado[i][7]+"</td><td>"+resultado[i][8]+"</td><td>"+data+"</td><td>"+resultado[i][10]+"</td>";
+                        html+="<td></tr>";
+                }
+                else{
+                    var data=resultado[i][9];
+                    data=data.split('-');
+                    data=data[1]+'/'+data[0]+'/'+data[2]
+                    html+="<tr class='cinza'><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="<td>"+resultado[i][4]+"</td><td>"+resultado[i][5]+"</td><td>"+resultado[i][6]+"</td><td>"+resultado[i][7]+"</td><td>"+resultado[i][8]+"</td><td>"+data+"</td><td>"+resultado[i][10]+"</td>";
+                        html+="<td></tr>";
+                }
+            
+            }
+            html+="</table><br><br><button type='button' class='btn btn-success' onclick='apagarselecao()'>apagar</button>"
+            document.getElementById('listavendas').innerHTML=html;
+            
+
+        
+            }.bind(this));
+           
+        }
+        if(filtrodata=='verdade'){
+            var datas=document.querySelector('input[name=data]').value;
+            var data1=document.querySelector('select[name=datasdefine]').value;
+            var datal=datas.split('/')
+            datal=datal[1]+'-'+datal[0]+'-'+datal[2]
+            console.log(datal,data1);
+            let params = new URLSearchParams();
+            params.append('puxarhistoricovendas', 'sim');
+            params.append('puxarhistoricovendascomum', 'nao');
+            params.append('pesquisadata', 'sim');
+            params.append('data', datal);
+            params.append('dataordem', data1);
+            var url= ' http://localhost:5000/historico'
+            axios.get(url,{params})
+ 
+            .then(function( response ){
+            // Handle success
+            //console.log(response.data)
+            var resultado=response.data;
+            var limite=resultado.length;
+            console.log(limite);
+            var html="<table  width='100%'  height='100%'><tr class='cinza'><td>index</td><td> cidade  </td><td>  obra  </td><td> responsavel  </td><td>cnpj</td><td>cliente</td><td>valor</td><td>valortotal</td><td>cadastro</td><td>data</td><td>servico</td></tr>";
+            for(var i=0; i<limite;i++){
+                //console.log(i);
+                if(i%2==0){
+                    var data=resultado[i][9];
+                    data=data.split('-');
+                    data=data[1]+'/'+data[0]+'/'+data[2]
+                    html+="<tr ><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="<td>"+resultado[i][4]+"</td><td>"+resultado[i][5]+"</td><td>"+resultado[i][6]+"</td><td>"+resultado[i][7]+"</td><td>"+resultado[i][8]+"</td><td>"+data+"</td><td>"+resultado[i][10]+"</td>";
+                        html+="<td></tr>";
+                }
+                else{
+                    var data=resultado[i][9];
+                    data=data.split('-');
+                    data=data[1]+'/'+data[0]+'/'+data[2]
+                    html+="<tr class='cinza'><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="<td>"+resultado[i][4]+"</td><td>"+resultado[i][5]+"</td><td>"+resultado[i][6]+"</td><td>"+resultado[i][7]+"</td><td>"+resultado[i][8]+"</td><td>"+data+"</td><td>"+resultado[i][10]+"</td>";
+                        html+="<td></tr>";
+                }
+                
+            
+            }
+            html+="</table>"
+            document.getElementById('listavendas').innerHTML=html;
+            
+
+        
+            }.bind(this));
+
+        }
+    }
+    //pegar os produtos para puxar historico
+    function atualiza(){
+            let params = new URLSearchParams();
+            params.append('informacao', 'sim');
+            var url= ' http://localhost:5000/inserir'
+            axios.get(url,{params})
+ 
+            .then(function( response ){
+            // Handle success
+            //console.log(response.data)
+            var resultado=response.data;
+            var limite=resultado.length;
+            console.log(limite);
+            var html="<table  width='100%'  height='100%'><tr class='cinza'><td> Item  </td><td>  Especificação  </td><td> Valor  </td><td>Folha</td><td>historico</td></tr>"
+            for(var i=0; i<limite;i++){
+                //console.log(i);
+                if(i%2==0){
+                    html+="<tr ><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>historico</button></td></tr>";
+                }
+                else{
+                    html+="<tr class='cinza'><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                        html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>historico</button></td></tr>";
+                }
+            
+            }
+            html+="</table>"
+            document.getElementById('listaprodutos').innerHTML=html;
+            
+
+        
+            }.bind(this));
+        }
+ 
+        setTimeout(atualiza, 1000);
+        // funcao para puxar o historico
+        function altera(teste){
+            var a=teste.toString();
+            console.log(a);
+            let params = new URLSearchParams();
+            params.append('puxarhistoricoproduto', 'sim');
+            params.append('idprodutos', a);
+            var url= ' http://localhost:5000/historico'
+            axios.get(url,{params})
+ 
+            .then(function( response ){
+            // Handle success
+            //console.log(response.data)
+             // Handle success
+            console.log(response.data)
+            var resultado=response.data;
+            var limite=resultado.length;
+            var html="<button type='button' class='btn btn-primary' onclick='atualiza()'>voltar</button><br><br><table  width='100%'  height='100%'><tr class='cinza'><td> Item  </td><td>  Especificação  </td><td> Valor  </td><td>Data</td></tr>"
+            for(var i=0; i<limite;i++){
+                //console.log(i);
+                if(i%2==0){
+                    html+="<tr ><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="</tr>";
+                }
+                else{
+                    html+="<tr class='cinza'><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                        html+="<td></tr>";
+                }
+            
+            }
+            html+="</table>"
+            document.getElementById('listaprodutos').innerHTML=html;
+        
+            }.bind(this));
+        }
+</script>

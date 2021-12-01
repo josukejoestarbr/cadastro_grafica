@@ -1,0 +1,433 @@
+<html> 
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=10, minimum-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.22.2/sweetalert2.min.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+     <!-- Optional JavaScript; choose one of the two! -->
+    
+    
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <link 
+        rel="stylesheet" 
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap-grid.min.css" />
+            
+    <!-- biblioteca axios para get e post-->  
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!-- fim da biblioteca-->
+        <title>Gráfica ABM Plotagem</title>
+    </head>
+<style>
+    td {
+  padding: .7em;
+  margin: 0;
+  /*border: 1px solid #ccc;*/
+  text-align: center;
+}
+    .cinza{
+        background-color:grey;
+        color:white
+    }
+    .branco{
+        background-color: white;
+        color:black;
+    }
+    .branco1{
+        color:white;
+    }
+.orange{
+     background-color:#4682B4;
+     color:white;
+     
+     text-decoration:none; 
+ }
+ select{
+    font-size:12px;
+ }
+ .aumenta{
+    font-size:14px;
+ }
+ .orange1{
+     background-color:#4682B4;
+     color:white;
+     font-size:12px;
+ }
+ .orange1:hover{
+     transition:1s;
+     font-size:12px;
+     background-color:rgb(23, 63, 196);
+     color:white;
+     text-decoration:none; 
+ }
+ label{
+     font-size:12px;
+ }
+ .preto1{
+    background-color:black;
+ }
+ .preto{
+     background-color:black;
+     color:white;
+     font-size:14px;
+ }
+ .preto:hover{
+     transition:.5s;
+     color:black;
+     background-color:white;
+ }
+</style>
+
+
+
+<body>
+   
+    <div class='row '>
+        <div class='col-md-3 preto1'>
+            <img src='../static/img/brasaoraniere.png' class='img-fluid' >
+        
+        </div>
+        <div class='col-md-9 preto1'>
+            <h1 class="branco1">&nbsp;</h1><br>
+           
+           
+            <a href='/inserir' class="btn preto">cadastro de produtos</a>
+            <a href='/vendas' class="btn preto">cadastro de vendas</a>
+           <a href='/historico' class="btn preto">histórico</a>
+            </div>
+           
+            </div>
+    <div class="container">
+       <div class="row" >
+           <div class="col-md-12" align="center">
+                <h3>Especificação</h3>
+                <input type="text" name="especificacao" class="aumenta"><br><br>
+                <h3>Valor</h3>
+                <input type="text" name="valor"  class="aumenta" onkeypress='return filtroTeclas(event)'><br><br>
+                <h3>Folha</h3>
+                <input type="radio" name="folha" value="nao" checked><label> Não</label>&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="folha" value="sim" ><label> Sim</label><br><br>
+                <select name="tipo">
+                   <option value='A0' >A0</value>
+                   <option value='A1' >A1</value>
+                   <option value='A2'>A2</value>
+               </select>
+               <br><br>
+               <button type="button" id="cadastrar" class="btn btn-primary aumenta"  onclick="cadastro()">Cadastrar</button>
+           </div>
+           <br><br>
+           <div class="col-md-12" align="center">
+               <h1>Itens cadastrados</h1>
+               <div id="resposta_cadastro"></div><br><br>
+               <div id="resposta_itens"></div>
+
+
+           </div>
+
+               
+           
+           
+         
+  
+           </div>
+       </div>
+  
+    </div>
+
+    <!-- inserir modal aqui-->
+    <div class="modal fade" id="modalmuda" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+             
+              <button type="button" class="close" onclick='fechar()' aria-label="Fechar">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Indexador</label>
+                    <input type="text" class="form-control" id="indexadoraltera" readonly='true'>
+                  </div>
+                <div class="form-group">
+                  <label for="recipient-name" class="col-form-label">Especificacao</label>
+                  <input type="text" class="form-control" id="especificacaoaltera">
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">valor</label>
+                  <textarea class="form-control" id="valoraltera" onkeypress='return filtroTeclas(event)'></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="message-text" class="col-form-label">folha</label>
+                    <textarea class="form-control" id="folhaaltera" readonly='true'></textarea>
+                  </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" onclick='fechar()'>Fechar</button>
+              <button type="button" class="btn btn-primary" onclick='inseriralteracoes()'>Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <script>
+       var filtroTeclas = function(event) {
+                                          return ((event.charCode >= 48 && event.charCode <= 57) || (event.keyCode == 45 || event.charCode == 46))
+                                          }
+        function cadastro(){
+           
+            var folha=document.querySelector('input[name=folha]:checked').value;
+            var especificacao=document.querySelector('input[name=especificacao]').value;
+            var valor=document.querySelector('input[name=valor]').value;
+            console.log(folha,especificacao,valor);
+            if(folha=='nao'){
+                
+               console.log('nao');
+               if(especificacao!='' && valor!=''){
+                let params = new URLSearchParams();
+                params.append('especificacao', especificacao);
+                params.append('valor', valor);
+                params.append('folha', 'nao');
+                params.append('deletar', 'nao');
+            params.append('substituir', 'nao');
+                var url= ' http://localhost:5000/inserir'
+                axios.post(url,params)
+ 
+                .then(function( response ){
+            // Handle success
+            var resultado=response.data;
+            var limite=resultado.length;
+            console.log(limite);
+            var html="<table ><tr class='cinza'><td> Item  </td><td>  Especificação  </td><td> Valor  </td><td>Folha</td></tr>"
+            for(var i=0; i<limite;i++){
+                console.log(i);
+                if(i%2==0){
+                    html+="<tr ><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>atualizar</button></td></tr>";
+                }
+                else{
+                    html+="<tr class='cinza'><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                        html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>atualizar</button></td></tr>";
+                }
+            
+            }
+            html+="</table>"
+            document.getElementById('resposta_itens').innerHTML=html;
+            
+
+        
+            }.bind(this));
+
+               }
+               else{
+                document.getElementById('resposta_cadastro').innerHTML="por favor, insira caracteres válidos";
+                
+                }
+
+            }
+            if(folha=='sim'){
+                console.log('sim');
+                var tipo=document.querySelector('select[name=tipo]').value;
+                if(especificacao!='' && valor!=''){
+                let params = new URLSearchParams();
+                params.append('especificacao', especificacao);
+                params.append('valor', valor);
+                params.append('tipo', tipo);
+                params.append('folha', 'sim');
+                params.append('deletar', 'nao');
+            params.append('substituir', 'nao');
+                var url= ' http://localhost:5000/inserir'
+                axios.post(url,params)
+ 
+                .then(function( response ){
+            // Handle success
+            var resultado=response.data;
+            var limite=resultado.length;
+            console.log(limite);
+            var html="<table ><tr class='cinza'><td> Item  </td><td>  Especificação  </td><td> Valor  </td><td>Folha</td></tr>"
+            for(var i=0; i<limite;i++){
+                console.log(i);
+                if(i%2==0){
+                    html+="<tr ><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>atualizar</button></td></tr>";
+                }
+                else{
+                    html+="<tr class='cinza'><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                        html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>atualizar</button></td></tr>";
+                }
+            
+            }
+            html+="</table><br><br><button type='button' class='btn btn-success aumenta' onclick='apagar()'>deletar seleção</button>"
+            document.getElementById('resposta_itens').innerHTML=html;
+            
+
+        
+            }.bind(this));
+
+               }
+               else{
+                document.getElementById('resposta_cadastro').innerHTML="por favor, insira caracteres válidos";
+               }
+
+            }
+        }
+        function apagar(){
+            var indexador=document.querySelector('input[name=valorapaga]:checked').value;
+            console.log(indexador)
+            let params = new URLSearchParams();
+            params.append('deletar', 'sim');
+            params.append('substituir', 'nao');
+            params.append('indexador', indexador);
+            var url= ' http://localhost:5000/inserir'
+            axios.post(url,params)
+ 
+            .then(function( response ){
+            // Handle success
+            //console.log(response.data)
+            var resultado=response.data;
+            var limite=resultado.length;
+            console.log(limite);
+            var html="<table ><tr class='cinza'><td> Item  </td><td>  Especificação  </td><td> Valor  </td><td>Folha</td></tr>"
+            for(var i=0; i<limite;i++){
+                //console.log(i);
+                if(i%2==0){
+                    html+="<tr ><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>atualizar</button></td></tr>";
+                }
+                else{
+                    html+="<tr class='cinza'><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                        html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>atualizar</button></td></tr>";
+                }
+            
+            }
+            html+="</table><br><br><button type='button' class='btn btn-success aumenta' onclick='apagar()'>deletar seleção</button>"
+            document.getElementById('resposta_itens').innerHTML=html;
+            
+
+        
+            }.bind(this));
+        }
+        function altera(valor){
+            console.log('valor:',valor);
+            let params = new URLSearchParams();
+            params.append('informacao', 'simmuda');
+            params.append('deletar', 'nao');
+            params.append('substituir', 'nao');
+            params.append('index',valor);
+            var url= ' http://localhost:5000/inserir'
+            axios.get(url,{params})
+ 
+            .then(function( response ){
+            // Handle success
+            //console.log(response.data)
+            var valor=response.data[0];
+            var index=valor[0];
+            var especificacao=valor[1];
+            var preco=valor[2];
+            var folha=valor[3];
+            document.getElementById('indexadoraltera').value=index;
+            document.getElementById('especificacaoaltera').value=index;
+            document.getElementById('especificacaoaltera').value=especificacao;
+            document.getElementById('valoraltera').value=preco;
+            document.getElementById('folhaaltera').value=folha;
+            $('#modalmuda').modal('show');
+        
+            }.bind(this));
+            
+        }
+        function inseriralteracoes(){
+            $('#modalmuda').modal('hide');
+            var index= document.getElementById('indexadoraltera').value;
+            var especificacao= document.getElementById('especificacaoaltera').value;
+            var preco=document.getElementById('valoraltera').value;
+            var folha=document.getElementById('folhaaltera').value;
+            let params = new URLSearchParams();
+            params.append('deletar', 'nao');
+            params.append('substituir', 'sim');
+            params.append('indexadoraltera',index);
+            params.append('especificacaoaltera',especificacao);
+            params.append('valoraltera',preco);
+            params.append('folhaaltera',folha);
+            var url= ' http://localhost:5000/inserir'
+            axios.post(url,params)
+ 
+            .then(function( response ){
+            // Handle success
+            //console.log(response.data)
+             // Handle success
+            //console.log(response.data)
+            var resultado=response.data;
+            var limite=resultado.length;
+            console.log(limite);
+            var html="<table ><tr class='cinza'><td> Item  </td><td>  Especificação  </td><td> Valor  </td><td>Folha</td><td>atualizar</td></tr>"
+            for(var i=0; i<limite;i++){
+                //console.log(i);
+                if(i%2==0){
+                    html+="<tr ><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>atualizar</button></td></tr>";
+                }
+                else{
+                    html+="<tr class='cinza'><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                        html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>atualizar</button></td></tr>";
+                }
+            
+            }
+            html+="</table><br><br><button type='button' class='btn btn-success aumenta' onclick='apagar()'>deletar seleção</button>"
+            document.getElementById('resposta_itens').innerHTML=html;
+            
+
+        
+            }.bind(this));
+            
+
+        }
+        function fechar(){
+            
+            $('#modalmuda').modal('hide');
+        }
+        function atualiza(){
+            let params = new URLSearchParams();
+            params.append('informacao', 'sim');
+            var url= ' http://localhost:5000/inserir'
+            axios.get(url,{params})
+ 
+            .then(function( response ){
+            // Handle success
+            //console.log(response.data)
+            var resultado=response.data;
+            var limite=resultado.length;
+            console.log(limite);
+            var html="<table ><tr class='cinza'><td> Item  </td><td>  Especificação  </td><td> Valor  </td><td>Folha</td><td>atualizar</td></tr>"
+            for(var i=0; i<limite;i++){
+                //console.log(i);
+                if(i%2==0){
+                    html+="<tr ><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                    html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>atualizar</button></td></tr>";
+                }
+                else{
+                    html+="<tr class='cinza'><td><input type='radio' name='valorapaga' value="+resultado[i][0]+">"+resultado[i][0]+"</td><td>"+resultado[i][1]+"</td><td>"+resultado[i][2]+"</td><td>"+resultado[i][3]+"</td>";
+                        html+="<td><button type='button' class='btn btn-primary aumenta' onclick='altera("+resultado[i][0]+ ")'>atualizar</button></td></tr>";
+                }
+            
+            }
+            html+="</table><br><br><button type='button' class='btn btn-success aumenta' onclick='apagar()'>deletar seleção</button>"
+            document.getElementById('resposta_itens').innerHTML=html;
+            
+
+        
+            }.bind(this));
+        }
+ 
+        setTimeout(atualiza, 1000);
+    </script>
+    
+</body>
+</html>
+
+

@@ -1,0 +1,245 @@
+<html> 
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=10, minimum-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.22.2/sweetalert2.min.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+     <!-- Optional JavaScript; choose one of the two! -->
+    
+    
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <link 
+        rel="stylesheet" 
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap-grid.min.css" />
+            
+       
+    <!-- biblioteca axios para get e post-->  
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <title>Corretora</title>
+    </head>
+<style>
+    .cinza{
+        background-color:grey;
+        color:white
+    }
+    .branco{
+        background-color: white;
+        color:black;
+    }
+    .branco1{
+        color:white;
+    }
+.orange{
+     background-color:#4682B4;
+     color:white;
+     
+     text-decoration:none; 
+ }
+ .orange1{
+     background-color:#4682B4;
+     color:white;
+     font-size:12px;
+ }
+ .orange1:hover{
+     transition:1s;
+     font-size:12px;
+     background-color:rgb(23, 63, 196);
+     color:white;
+     text-decoration:none; 
+ }
+ label{
+     font-size:12px;
+ }
+ .preto1{
+    background-color:black;
+ }
+ .preto{
+     background-color:black;
+     color:white;
+     font-size:14px;
+ }
+ .preto:hover{
+     transition:.5s;
+     color:black;
+     background-color:white;
+ }
+ label{
+     font-size:16px;
+ }
+</style>
+
+
+
+<body>
+   
+    <div class='row '>
+        <div class='col-md-3 preto1'>
+            <img src='../static/img/brasaoraniere.png' class='img-fluid' >
+        
+        </div>
+        <div class='col-md-9 preto1'>
+            <h1 class="branco1">&nbsp;</h1><br>
+           
+            
+            <a href='/inserir' class="btn preto">cadastro de produtos</a>
+            <a href='/vendas' class="btn preto">cadastro de vendas</a>
+           <a href='/historico' class="btn preto">histórico</a>
+            </div>
+           
+            </div>
+    <div class="container">
+       <div class="row">
+           <div class="col-md-12" align="center">
+               <H1>Inserir cadastro de vendas</H1>
+               <br><br>
+           </div>
+           <br><br>
+           <div class="col-md-6">
+              <input type="text" name="cidade" style='font-size:16px'><label>cidade</label><br><br>
+              <input type="text" name="obra" style='font-size:16px'><label>obra</label><br><br>
+              <input type="text" name="responsavel" style='font-size:16px'><label>responsavel</label><br><br>
+           </div>
+           <div class="col-md-6">
+            <input type="text" name="cliente" style='font-size:16px'><label>cliente</label><br><br>
+            <input type="text" name="cnpj" style='font-size:16px'><label>cnpj</label><br><br>
+            <input type="text" name="enderecoobra" style='font-size:16px'><label>Endereço da Obra</label><br><br>
+         </div>
+            <div class="col-md-12" align="center">
+                <br><br>
+                <h1>Produtos</h1>
+               <div id="capturaprodutos">
+
+               </div>
+               <div id="precoproduto">
+
+               </div>
+               <br><br>
+               <div id="respostavendas">
+
+               </div>
+            </div>
+         
+       </div>
+  
+    </div>
+    
+</body>
+</html>
+
+<script>
+var filtroTeclas = function(event) {
+                                          return ((event.charCode >= 48 && event.charCode <= 57) || (event.keyCode == 45 || event.charCode == 46))
+                                          }
+function atualiza(){
+            let params = new URLSearchParams();
+            params.append('puxavendas', 'sim');
+            params.append('cadastro', 'nao');
+            var url= ' http://localhost:5000/vendas'
+            axios.get(url,{params})
+ 
+            .then(function( response ){
+            // Handle success
+            //console.log(response.data)
+            var resultado=response.data;
+            var limite=resultado.length;
+            console.log(limite);
+            var html1="<select name='preco' style='font-size:16px'>"
+            for(var i=0; i<limite;i++){
+                //console.log(i);
+                
+                if(resultado[i][3]){
+                html1+="<option value="+resultado[i][2]+","+resultado[i][1]+">"+resultado[i][1]+" "+resultado[i][3]+"</option>"
+                }
+                else{
+                    html1+="<option value="+resultado[i][2]+","+resultado[i][1]+">"+resultado[i][1]+"</option>"
+                }
+            }
+            html1+="</select>&nbsp; &nbsp; <input type='text' style='font-size:16px' name='qtd' id='qtd1' onkeypress='return filtroTeclas(event)'><label>Quantidade</label> &nbsp; &nbsp; <button type='button' style='font-size:16px' class='btn btn-primary' onclick='calcula()'>calcular</button>"
+           
+            document.getElementById('capturaprodutos').innerHTML=html1;
+            
+
+        
+            }.bind(this));
+        }
+ 
+        setTimeout(atualiza, 1000);
+        function inserir(){
+            var valor=document.querySelector('input[name=qtd]').value;
+            var valor1=document.querySelector('select[name=preco]').value;
+            valor1=valor1.split(',');
+            var servico=valor1[1];
+            valor1=valor1[0];
+            console.log(valor1);
+            console.log(servico);
+            while(servico.indexOf(' ') != -1){
+                servico=servico.replace(' ','_');
+
+            }
+            var valortotal=valor*valor1
+            var cidade=document.querySelector('input[name=cidade]').value;
+            var obra=document.querySelector('input[name=obra]').value;
+            var responsavel=document.querySelector('input[name=responsavel]').value;
+            var cnpj=document.querySelector('input[name=cnpj]').value;
+            var cliente=document.querySelector('input[name=cliente]').value;
+            var enderecoobra=document.querySelector('input[name=enderecoobra]').value;
+            console.log(cidade,obra,responsavel,cnpj,cliente,valortotal)
+            
+                //logica para inserir os dados
+                let params = new URLSearchParams();
+                params.append('cidade', cidade);
+                params.append('obra', obra);
+                params.append('responsavel', responsavel);
+                params.append('cnpj', cnpj);
+                params.append('cliente', cliente);
+                params.append('valor', valor);
+                params.append('valortotal', valortotal);
+                params.append('cadastro', 'sim');
+                params.append('enderecoobra',enderecoobra);
+                params.append('servico',servico);
+                var url= ' http://localhost:5000/vendas'
+                axios.get(url,{params})
+ 
+                .then(function( response ){
+            // Handle success
+            var resultado=response.data;
+            var limite=resultado.length;
+            console.log(limite);
+            
+             var html="<h1>"+resultado+"</h1>";
+            document.getElementById('respostavendas').innerHTML=html;
+            
+
+        
+            }.bind(this));
+
+
+            
+        }
+        function calcula(){
+           // console.log("entrou em calcula");
+            var valor=document.querySelector('input[name=qtd]').value;
+            var valor1=document.querySelector('select[name=preco]').value;
+            valor1=valor1.split(',');
+            var servico=valor1[1];
+            valor1=valor1[0];
+            console.log(valor1);
+            console.log(servico);
+            while(servico.indexOf(' ') != -1){
+                servico=servico.replace(' ','_');
+
+            }
+            console.log(servico);
+            var valortotal=valor*valor1
+            var html="<label>"+valortotal+"</label><br><br><button type='button' class='btn btn-primary' onclick='inserir()' style='font-size:16px'> inserir dados</button>"
+            document.getElementById('precoproduto').innerHTML=html;
+           
+            
+        }
+</script>
