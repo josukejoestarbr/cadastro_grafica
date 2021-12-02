@@ -1,7 +1,7 @@
 def credencialbanco():
     Hos='localhost'
     Use='root'
-    Passwor='aablcoa12'
+    Passwor='teste'
     Db='mysql'
     Charset='utf8mb4'
     Port=3307
